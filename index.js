@@ -194,9 +194,9 @@ export default {
      * 加密
      * @param {string} data 密文
      * @param {string} key key
-     * @param {string} data iv
+     * @param {string} iv iv
      */
-    encrypt(data) {
+    encrypt(data, key, iv) {
         key = cryptoJS.enc.Utf8.parse(key);
         iv = cryptoJS.enc.Utf8.parse(iv);
         const srcs = cryptoJS.enc.Utf8.parse(data);
