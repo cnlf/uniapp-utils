@@ -217,7 +217,7 @@ export default {
     decrypt(data, key, iv) {
         key = cryptoJS.enc.Utf8.parse(key);
         iv = cryptoJS.enc.Utf8.parse(iv);
-        const result = cryptoJS.AES.decrypt(data, key, {
+        let result = cryptoJS.AES.decrypt(data, key, {
             iv: iv,
             mode: cryptoJS.mode.CBC,
             padding: cryptoJS.pad.Pkcs7
