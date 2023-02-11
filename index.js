@@ -285,7 +285,7 @@ export default {
     toQueryString(object) {
         object.sign && delete object.sign;
         return Object.keys(object)
-            .filter(key => object[key] !== void 0 && object[key] !== '' && object[key] !== null)
+            .filter(key => object[key] !== void 0 && object[key] !== "" && object[key] !== null && object[key] !== "undefined")
             .sort()
             .map(key => key + '=' + encodeURIComponent(object[key]))
             .join('&')
@@ -627,16 +627,20 @@ export default {
             });
         }
 
+        let album = 'scope.writePhotosAlbum';
+        // #ifdef MP-TOUTIAO
+        album = 'scope.album';
+        // #endif
+
         uni.getSetting({
             success: res => {
                 // 如果没有相册权限
-                console.log(res.authSetting["scope.writePhotosAlbum"]);
-                if (res.authSetting["scope.writePhotosAlbum"]) {
+                if (res.authSetting[album]) {
                     saveImg();
                 } else {
                     //向用户发起授权请求
                     uni.authorize({
-                        scope: "scope.writePhotosAlbum",
+                        scope: album,
                         success: () => {
                             // 授权成功保存图片到系统相册
                             saveImg();
@@ -719,8 +723,13 @@ export default {
                 }
             },
             fail() {
-                uni.switchTab({
-                    url:'/pages/index/index'
+                uni.redirectTo({
+                    url:'/pages/index/index',
+                    fail() {
+                        uni.switchTab({
+                            url:'/pages/index/index'
+                        })
+                    }
                 })
             }
         })
