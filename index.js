@@ -618,10 +618,7 @@ export default {
                             return uni.showToast({
                                 title: "保存成功！",
                             });
-                        },
-                        complete: (res) => {
-                            uni.hideLoading();
-                        },
+                        }
                     });
                 }
             });
