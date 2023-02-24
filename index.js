@@ -602,8 +602,9 @@ export default {
     /**
      * 下载图片
      * @param {string} url 图片地址
+     * @param {Function} cb 回调函数
      */
-    download(url) {
+    download(url, cb) {
         uni.showLoading({
             title: '正在保存图片...'
         });
@@ -615,6 +616,7 @@ export default {
                     uni.saveImageToPhotosAlbum({
                         filePath: image.path,
                         success(e) {
+                            cb && cb();
                             return uni.showToast({
                                 title: "保存成功！",
                             });
