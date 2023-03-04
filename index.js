@@ -734,11 +734,10 @@ export default {
         })
     },
 
-    //
     /**
      * 图片转base64
      * @param {string} src 图片地址
-     * @param {strubng} base64
+     * @return {Promise} base64
      */
     imageToBase64(src) {
         return new Promise((resolve, reject) => {
@@ -759,5 +758,20 @@ export default {
                 }
             });
         })
+    },
+
+    /**
+     * 随机范围内的数字
+     * @param {number} start 起始数字
+     * @param {number} end 起始数字
+     * @return {number || null} 随机数
+     */
+    randomByRange(start, end){
+        if (typeof start === 'number' && typeof end === 'number') {
+            return start + Math.floor(Math.random() * (end - start));
+        } else {
+            console.error('参数必须为数字');
+            return null;
+        }
     }
 }
