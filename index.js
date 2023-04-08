@@ -62,6 +62,7 @@ export default {
     getPlatform() {
         let platform;
         switch (process.env.VUE_APP_PLATFORM) {
+            case 'app':
             case 'app-plus':
                 let n = uni.getSystemInfoSync().platform.toLowerCase();
                 if (n === 'ios') {
