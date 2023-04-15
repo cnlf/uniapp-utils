@@ -685,7 +685,7 @@ export default {
         let url = `/pages/${page.url}`;
 
         if (page.query) {
-            query = utils.toQueryString(page.query);
+            query = this.toQueryString(page.query);
             url += `?${query}`;
         }
 
