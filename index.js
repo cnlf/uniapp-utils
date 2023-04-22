@@ -614,6 +614,35 @@ export default {
             title: '正在保存图片...'
         });
 
+        // #ifdef APP
+        uni.downloadFile({
+            url: path,
+            success: res =>{
+                if (res.statusCode === 200){
+                    uni.saveImageToPhotosAlbum({
+                        filePath: res.tempFilePath,
+                        success: function() {
+                            uni.showToast({
+                                title: "保存成功",
+                                icon: "none"
+                            });
+                        },
+                        fail: function() {
+                            uni.showToast({
+                                title: "保存失败，请稍后重试",
+                                icon: "none"
+                            });
+                        },
+                        complete() {
+                            uni.hideLoading();
+                        }
+                    });
+                }
+            }
+        })
+        // #endif
+
+        // #ifdef MP
         const saveImg = () => {
             uni.getImageInfo({
                 src: url,
@@ -673,6 +702,7 @@ export default {
                 uni.hideLoading();
             }
         });
+        // #endif
     },
 
     /**
