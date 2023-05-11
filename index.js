@@ -611,7 +611,7 @@ export default {
         }
 
         uni.showLoading({
-            title: '正在图片...'
+            title: '正在保存...'
         });
 
         // #ifdef APP
