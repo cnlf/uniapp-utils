@@ -601,7 +601,7 @@ export default {
     },
 
     /**
-     * 下载图片
+     * 下载到相册
      * @param {string} url 图片地址
      * @param {Function} cb 回调函数
      */
@@ -610,56 +610,137 @@ export default {
             url = url.replace('http://', 'https://')
         }
 
+        let type = 'image';
+        const reg = /\.\w+$/gi;
+        let ext = url.match(reg);
+        ext = ext.length ? ext[0].substring(1).toLowerCase() : '';
+        if (!ext) {
+            return uni.showModal({
+                content: '未知扩展名',
+                showCancel: false
+            });
+        }
+
+        if (['jpeg', 'jpg', 'png', 'gif', 'webp'].includes(ext)) {
+            type = 'image';
+        }
+        else if (['mp4', 'mov'].includes(ext)) {
+            type = 'video';
+        }
+
         uni.showLoading({
             title: '正在保存...'
         });
 
+        function saveImage(filePath) {
+            uni.saveImageToPhotosAlbum({
+                filePath,
+                success: () => {
+                    uni.showToast({
+                        title: "保存成功",
+                        icon: "none"
+                    });
+                },
+                fail: () => {
+                    uni.showToast({
+                        title: "保存失败，请稍后重试",
+                        icon: "none"
+                    });
+                },
+                complete: () => {
+                    uni.hideLoading();
+                }
+            });
+        }
+
+        function saveVideo(filePath) {
+            uni.saveVideoToPhotosAlbum({
+                filePath,
+                success: () => {
+                    cb && cb();
+                    return uni.showToast({
+                        title: "保存成功！",
+                    });
+                },
+                fail: () => {
+                    uni.showToast({
+                        title: "保存失败，请稍后重试",
+                        icon: "none"
+                    });
+                },
+                complete: () => {
+                    uni.hideLoading();
+                }
+            })
+        }
+
+        function downloadImage()  {
+            uni.getImageInfo({
+                src: url,
+                success: res => {
+                    saveImage(res.path)
+                },
+                fail: () => {
+                    uni.showToast({
+                        title: "图片下载失败，请稍后重试",
+                        icon: "none"
+                    });
+                },
+                complete: () => {
+                    uni.hideLoading();
+                }
+            });
+        }
+
+        const downloadVideo = () => {
+            uni.downloadFile({
+                url: url,
+                success: res => {
+                    if (res.statusCode !== 200) {
+                        uni.hideLoading();
+                        uni.showToast({
+                            title: "视频下载失败，请稍后重试",
+                            icon: "none"
+                        });
+                    } else {
+                        saveVideo(res.tempFilePath);
+                    }
+                },
+                fail: () => {
+                    uni.showToast({
+                        title: "视频下载失败，请稍后重试",
+                        icon: "none"
+                    });
+                },
+                complete: () => {
+                    uni.hideLoading();
+                }
+            })
+        }
+
         // #ifdef APP
         uni.downloadFile({
-            url: path,
-            success: res =>{
-                if (res.statusCode === 200){
-                    uni.saveImageToPhotosAlbum({
-                        filePath: res.tempFilePath,
-                        success: function() {
-                            uni.showToast({
-                                title: "保存成功",
-                                icon: "none"
-                            });
-                        },
-                        fail: function() {
-                            uni.showToast({
-                                title: "保存失败，请稍后重试",
-                                icon: "none"
-                            });
-                        },
-                        complete() {
-                            uni.hideLoading();
-                        }
+            url: url,
+            success: res => {
+                if (res.statusCode !== 200) {
+                    uni.hideLoading();
+                    uni.showToast({
+                        title: "下载失败，请稍后重试",
+                        icon: "none"
                     });
+                } else {
+                    if (type === 'image') {
+                        saveImage(res.tempFilePath);
+                    } else if (type === 'video') {
+                        saveVideo(res.tempFilePath);
+                    }
                 }
             }
         })
         // #endif
 
-        // #ifdef MP
-        const saveImg = () => {
-            uni.getImageInfo({
-                src: url,
-                success(image) {
-                    uni.saveImageToPhotosAlbum({
-                        filePath: image.path,
-                        success(e) {
-                            cb && cb();
-                            return uni.showToast({
-                                title: "保存成功！",
-                            });
-                        }
-                    });
-                }
-            });
-        }
 
+        // #ifdef MP
         let album = 'scope.writePhotosAlbum';
         // #ifdef MP-TOUTIAO
         album = 'scope.album';
@@ -669,14 +750,21 @@ export default {
             success: res => {
                 // 如果没有相册权限
                 if (res.authSetting[album]) {
-                    saveImg();
+                    if (type === 'image') {
+                        downloadImage();
+                    } else if (type === 'video') {
+                        downloadVideo();
+                    }
                 } else {
                     //向用户发起授权请求
                     uni.authorize({
                         scope: album,
                         success: () => {
-                            // 授权成功保存图片到系统相册
-                            saveImg();
+                            if (type === 'image') {
+                                downloadImage();
+                            } else if (type === 'video') {
+                                downloadVideo();
+                            }
                         },
                         //授权失败
                         fail: () => {
@@ -698,11 +786,11 @@ export default {
                     });
                 }
             },
-            complete() {
+            complete: () => {
                 uni.hideLoading();
             }
         });
-        // #endif
+        // #endifendif
     },
 
     /**
