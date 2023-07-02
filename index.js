@@ -646,9 +646,6 @@ export default {
                         title: "保存失败，请稍后重试",
                         icon: "none"
                     });
-                },
-                complete: () => {
-                    uni.hideLoading();
                 }
             });
         }
@@ -660,16 +657,14 @@ export default {
                     cb && cb();
                     return uni.showToast({
                         title: "保存成功！",
+                        icon: "success"
                     });
                 },
                 fail: () => {
                     uni.showToast({
                         title: "保存失败，请稍后重试",
-                        icon: "none"
+                        icon: "error"
                     });
-                },
-                complete: () => {
-                    uni.hideLoading();
                 }
             })
         }
@@ -683,11 +678,8 @@ export default {
                 fail: () => {
                     uni.showToast({
                         title: "图片下载失败，请稍后重试",
-                        icon: "none"
+                        icon: "error"
                     });
-                },
-                complete: () => {
-                    uni.hideLoading();
                 }
             });
         }
@@ -697,10 +689,9 @@ export default {
                 url: url,
                 success: res => {
                     if (res.statusCode !== 200) {
-                        uni.hideLoading();
                         uni.showToast({
                             title: "视频下载失败，请稍后重试",
-                            icon: "none"
+                            icon: "error"
                         });
                     } else {
                         saveVideo(res.tempFilePath);
@@ -709,11 +700,8 @@ export default {
                 fail: () => {
                     uni.showToast({
                         title: "视频下载失败，请稍后重试",
-                        icon: "none"
+                        icon: "error"
                     });
-                },
-                complete: () => {
-                    uni.hideLoading();
                 }
             })
         }
@@ -723,10 +711,9 @@ export default {
             url: url,
             success: res => {
                 if (res.statusCode !== 200) {
-                    uni.hideLoading();
                     uni.showToast({
                         title: "下载失败，请稍后重试",
-                        icon: "none"
+                        icon: "error"
                     });
                 } else {
                     if (type === 'image') {
@@ -785,9 +772,6 @@ export default {
                         },
                     });
                 }
-            },
-            complete: () => {
-                uni.hideLoading();
             }
         });
         // #endif
