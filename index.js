@@ -97,6 +97,63 @@ export default {
     },
 
     /**
+     * 获取登录类型
+     * @return {string} 平台名称
+     */
+    getLoginType() {
+        let platform;
+        switch (process.env.VUE_APP_PLATFORM) {
+            case 'app':
+            case 'app-plus':
+                let n = uni.getSystemInfoSync().platform.toLowerCase();
+                if (n === 'ios') {
+                    platform = 'ios';
+                } else if (n === 'android') {
+                    platform = 'android';
+                }
+                break;
+            case 'web':
+                platform = 'web';
+                break;
+            case 'mp-weixin':
+                platform = 'wx';
+                break;
+            case 'mp-alipay':
+                platform = 'alipay';
+                break;
+            case 'mp-baidu':
+                platform = 'baidu';
+                break;
+            case 'mp-toutiao':
+                platform = 'toutiao';
+                break;
+            case 'mp-lark':
+                platform = 'lark';
+                break;
+            case 'mp-qq':
+                platform = 'qq';
+                break;
+            case 'mp-kuaishou':
+                platform = 'ks';
+                break;
+            case 'mp-jd':
+                platform = 'jd';
+                break;
+            case 'quickapp-webview':
+                platform = 'kuai';
+                break;
+            case 'quickapp-webview-union':
+                platform = 'kuai-union';
+                break;
+            case 'quickapp-webview-huawei':
+                platform = 'kuai-huawei';
+                break;
+        }
+
+        return platform;
+    },
+
+    /**
      * 数组去重
      * @param {Array} array 数值
      * @retrun {Array} 数值
